@@ -15,7 +15,26 @@ router.get('/api/users/:_id/logs', async (req, res) => {
             })
         }
 
-        const exercises = await Exercise.find({author: req.params._id}).select('description duration date -_id')
+        var query = {}
+        var limit;
+        let exercises = []
+
+        if (req.query.from || req.query.to || req.query.limit) {
+            query.from = req.query.from
+            query.to = req.query.to
+
+            exercises = await Exercise.find({
+                author: req.params._id,
+                date: {
+                   $gte: new Date(req.query.from),
+                   $lt: new Date(req.query.to)
+                }
+            }).select('description duration date -_id').limit(limit);
+        }
+        else{
+            exercises = await Exercise.find({author: req.params._id}).select('description duration date -_id');
+        }
+
         const count = await Exercise.count({author: req.params._id});
 
 
@@ -25,7 +44,6 @@ router.get('/api/users/:_id/logs', async (req, res) => {
             count: count,
             log: exercises
         })
-        
 
     } catch (error) {
         res.send({
