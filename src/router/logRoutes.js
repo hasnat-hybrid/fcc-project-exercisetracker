@@ -20,10 +20,11 @@ router.get('/api/users/:_id/logs', async (req, res) => {
          let exercises1 = []
          let exercises = []
 
-         if (req.query.from || req.query.to || req.query.limit) {
-             query.from = new Date(req.query.from)
-             query.to = new Date(req.query.to)
-             query.limit = req.query.limit;
+         query.from = new Date(req.query.from)
+         query.to = new Date(req.query.to)
+         query.limit = parseInt(req.query.limit);
+
+         if (req.query.from || req.query.to) {
 
              //console.log(query.from, query.to);
 
@@ -39,14 +40,14 @@ router.get('/api/users/:_id/logs', async (req, res) => {
                 date: {
                     $lt: query.to
                 }
-            }).limit(query.limit).select('description duration date -_id')
+            }).select('description duration date -_id')
 
             //final-array
             exercises = exercises0.concat(exercises1)
 
         }
         else{
-            exercises = await Exercise.find({author: req.params._id}).select('description duration date -_id');
+            exercises = await Exercise.find({author: req.params._id}).select('description duration date -_id').limit(query.limit);
         }
 
         const count = await Exercise.count({author: req.params._id});
