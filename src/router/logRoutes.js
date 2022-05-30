@@ -16,7 +16,6 @@ router.get('/api/users/:_id/logs', async (req, res) => {
         }
 
          var query = {}
-         var limit;
          let exercises0 = []
          let exercises1 = []
          let exercises = []
@@ -24,6 +23,7 @@ router.get('/api/users/:_id/logs', async (req, res) => {
          if (req.query.from || req.query.to || req.query.limit) {
              query.from = new Date(req.query.from)
              query.to = new Date(req.query.to)
+             query.limit = req.query.limit;
 
              //console.log(query.from, query.to);
 
@@ -39,7 +39,7 @@ router.get('/api/users/:_id/logs', async (req, res) => {
                 date: {
                     $lt: query.to
                 }
-            }).select('description duration date -_id')
+            }).limit(query.limit).select('description duration date -_id')
 
             //final-array
             exercises = exercises0.concat(exercises1)
