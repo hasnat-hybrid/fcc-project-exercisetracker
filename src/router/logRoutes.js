@@ -1,6 +1,6 @@
 const express = require('express');
 const User = require('../models/user')
-const Exercise = require('../models/exercise')
+const Exercise = require('../models/exercise');
 const router = express.Router();
 
 router.get('/api/users/:_id/logs', async (req, res) => {
@@ -15,21 +15,35 @@ router.get('/api/users/:_id/logs', async (req, res) => {
             })
         }
 
-        var query = {}
-        var limit;
-        let exercises = []
+         var query = {}
+         var limit;
+         let exercises0 = []
+         let exercises1 = []
+         let exercises = []
 
-        if (req.query.from || req.query.to || req.query.limit) {
-            query.from = req.query.from
-            query.to = req.query.to
+         if (req.query.from || req.query.to || req.query.limit) {
+             query.from = new Date(req.query.from)
+             query.to = new Date(req.query.to)
 
-            exercises = await Exercise.find({
+             //console.log(query.from, query.to);
+
+            exercises0 = await Exercise.find({
                 author: req.params._id,
                 date: {
-                   $gte: new Date(req.query.from),
-                   $lt: new Date(req.query.to)
+                    $gt: query.from
                 }
-            }).select('description duration date -_id').limit(limit);
+            }).select('description duration date -_id')
+
+            exercises1 = await Exercise.find({
+                author: req.params._id,
+                date: {
+                    $lt: query.to
+                }
+            }).select('description duration date -_id')
+
+            //final-array
+            exercises = exercises0.concat(exercises1)
+
         }
         else{
             exercises = await Exercise.find({author: req.params._id}).select('description duration date -_id');
