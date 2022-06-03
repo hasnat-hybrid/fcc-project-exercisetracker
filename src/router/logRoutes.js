@@ -60,7 +60,7 @@ router.get('/api/users/:_id/logs', async (req, res) => {
 
         const count = await Exercise.count({author: req.params._id});
 
-        if (req.query.from || req.query.to && limit==1) {
+        if (req.query.from && req.query.to && query.limit==1) {
             exercises = await Exercise.find({
                 author: req.params._id,
                 date: {
