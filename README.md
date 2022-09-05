@@ -1,6 +1,6 @@
 # Exercise Tracker
 
-This is the solution for the File Metadata Microservice project.
+This is the solution for the Exercise-Tracker Microservice project.
 
 # Test & Requirements:
 
